@@ -17,6 +17,9 @@ class Thread extends Eloquent
      *
      * @var string
      */
+	 
+	protected $connection= 'legachat'; 	 
+	 
     protected $table = 'threads';
 
     /**
@@ -121,6 +124,11 @@ class Thread extends Eloquent
         return static::latest('updated_at');
     }
 
+
+public static function getAllLatestforUser( $uid )
+    {
+        return static::join('participants', 'participants.thread_id', '=', 'threads.id')->select('threads.*','participants.*')->where('participants.user_id', '=', $uid);
+    }
     /**
      * Returns all threads by subject.
      *
@@ -207,7 +215,7 @@ class Thread extends Eloquent
     {
         return $query->whereHas('participants', function (Builder $q) use ($participants) {
             $q->whereIn('user_id', $participants)
-                ->select($this->getConnection()->raw('DISTINCT(thread_id)'))
+                ->select($this->getConnection('legachat')->raw('DISTINCT(thread_id)'))
                 ->groupBy('thread_id')
                 ->havingRaw('COUNT(thread_id)=' . count($participants));
         });
@@ -321,7 +329,7 @@ class Thread extends Eloquent
      *
      * @return string
      */
-    public function participantsString($userId = null, $columns = ['name'])
+    public function participantsString($userId = null, $columns = ['first_name'])
     {
         $participantsTable = Models::table('participants');
         $usersTable = Models::table('users');
@@ -335,7 +343,7 @@ class Thread extends Eloquent
             ->select($this->getConnection()->raw($selectString));
 
         if ($userId !== null) {
-            $participantNames->where($usersTable . '.' . $userPrimaryKey, '!=', $userId);
+            $participantNames->get(); // where($usersTable . '.' . $userPrimaryKey, '!=', $userId);
         }
 
         return $participantNames->implode('name', ', ');

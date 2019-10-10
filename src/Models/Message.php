@@ -15,6 +15,9 @@ class Message extends Eloquent
      *
      * @var string
      */
+	 
+	protected $connection= 'legachat'; 
+	 
     protected $table = 'messages';
 
     /**

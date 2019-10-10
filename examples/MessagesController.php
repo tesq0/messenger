@@ -9,7 +9,7 @@ use Cmgmyr\Messenger\Models\Participant;
 use Cmgmyr\Messenger\Models\Thread;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Session;
 
 class MessagesController extends Controller
@@ -80,7 +80,7 @@ class MessagesController extends Controller
      */
     public function store()
     {
-        $input = Request::all();
+        $input = Input::all();
 
         $thread = Thread::create([
             'subject' => $input['subject'],
@@ -101,7 +101,7 @@ class MessagesController extends Controller
         ]);
 
         // Recipients
-        if (Request::has('recipients')) {
+        if (Input::has('recipients')) {
             $thread->addParticipant($input['recipients']);
         }
 
@@ -130,7 +130,7 @@ class MessagesController extends Controller
         Message::create([
             'thread_id' => $thread->id,
             'user_id' => Auth::id(),
-            'body' => Request::input('message'),
+            'body' => Input::get('message'),
         ]);
 
         // Add replier as a participant
@@ -142,8 +142,8 @@ class MessagesController extends Controller
         $participant->save();
 
         // Recipients
-        if (Request::has('recipients')) {
-            $thread->addParticipant(Request::input('recipients'));
+        if (Input::has('recipients')) {
+            $thread->addParticipant(Input::get('recipients'));
         }
 
         return redirect()->route('messages.show', $id);

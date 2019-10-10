@@ -9,6 +9,9 @@ class Models
      *
      * @var array
      */
+	 protected $connection= 'legachat'; 
+	 
+	 
     protected static $models = [];
 
     /**

@@ -14,7 +14,11 @@ class Participant extends Eloquent
      *
      * @var string
      */
-    protected $table = 'participants';
+    
+	protected $connection= 'legachat'; 	
+	
+	
+	protected $table = 'participants';
 
     /**
      * The attributes that can be set with Mass Assignment.
